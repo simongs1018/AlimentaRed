@@ -3,7 +3,9 @@ package com.example.alimentared
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -16,10 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AlimentaRedTheme {
-                // Estado para controlar en qué pantalla estamos
                 var currentScreen by remember { mutableStateOf("login") }
-
-                // Estado para guardar el ID del lote seleccionado
                 var selectedLoteId by remember { mutableStateOf<Long?>(null) }
 
                 Surface(
@@ -28,7 +27,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Column(modifier = Modifier.fillMaxSize()) {
 
-                        // Área principal donde se renderiza la pantalla activa
+                        // Contenedor principal de pantallas
                         Box(modifier = Modifier.weight(1f)) {
                             when (currentScreen) {
                                 "login" -> LoginScreen(
@@ -73,10 +72,18 @@ class MainActivity : ComponentActivity() {
                                 "indicadores" -> IndicadoresScreen(
                                     onVolver = { currentScreen = "lotes" }
                                 )
+
+                                "gestion_usuarios" -> GestionUsuariosScreen(
+                                    onVolver = { currentScreen = "lotes" }
+                                )
+
+                                "gestion_logistica" -> GestionLogisticaScreen(
+                                    onVolver = { currentScreen = "lotes" }
+                                )
                             }
                         }
 
-                        // Barra de navegación rápida en la parte inferior para probar todas las pantallas
+                        // Barra de navegación horizontal para probar fácilmente las 9 pantallas
                         if (currentScreen != "login") {
                             Surface(
                                 tonalElevation = 8.dp,
@@ -85,8 +92,9 @@ class MainActivity : ComponentActivity() {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .horizontalScroll(rememberScrollState())
                                         .padding(horizontal = 4.dp, vertical = 8.dp),
-                                    horizontalArrangement = Arrangement.SpaceAround
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                                 ) {
                                     FilterChip(
                                         selected = currentScreen == "lotes",
@@ -112,6 +120,16 @@ class MainActivity : ComponentActivity() {
                                         selected = currentScreen == "indicadores",
                                         onClick = { currentScreen = "indicadores" },
                                         label = { Text("Métricas") }
+                                    )
+                                    FilterChip(
+                                        selected = currentScreen == "gestion_usuarios",
+                                        onClick = { currentScreen = "gestion_usuarios" },
+                                        label = { Text("Admin Cuentas") }
+                                    )
+                                    FilterChip(
+                                        selected = currentScreen == "gestion_logistica",
+                                        onClick = { currentScreen = "gestion_logistica" },
+                                        label = { Text("Coord. Logística") }
                                     )
                                 }
                             }
